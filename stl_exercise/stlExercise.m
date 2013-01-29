@@ -117,7 +117,7 @@ softmaxModel = struct;
 % You need to compute softmaxModel using softmaxTrain on trainFeatures and
 % trainLabels
 
-
+[softmaxModel] = softmaxTrain(inputSize+hiddenSize,numLabels,1e-4,[trainData;trainFeatures],trainLabels);
 
 
 
@@ -136,7 +136,7 @@ softmaxModel = struct;
 % Compute Predictions on the test set (testFeatures) using softmaxPredict
 % and softmaxModel
 
-
+[pred] = softmaxPredict(softmaxModel, [testData;testFeatures]);
 
 
 

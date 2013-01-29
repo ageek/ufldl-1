@@ -42,14 +42,14 @@ b2grad = zeros(size(b2));
 % the gradient descent update to W1 would be W1 := W1 - alpha * W1grad, and similarly for W2, b1, b2. 
 % 
 [~,n] = size(data);
-a2 = sigmoid(W1*data+repmat(b1,1,n));
-a3 = sigmoid(W2*a2+repmat(b2,1,n));
+a2 = sigmoid(W1*data+b1(:,ones(n,1)));
+a3 = sigmoid(W2*a2+b2(:,ones(n,1)));
 
 rho_hat = sum(a2,2)/n;
 cost = sum((sum(0.5*(data-a3).^2,1)))/n + lambda/2*sum(sum(W1.^2)) + lambda/2*sum(sum(W2.^2)) + beta*sum(rho*log(rho./rho_hat)+(1-rho)*log((1-rho)./(1-rho_hat)));
 
 d3 = -(data-a3).*(a3.*(1-a3));
-d2 = W2'*d3.*(a2.*(1-a2));
+d2 = (W2'*d3 + beta*(-rho./repmat(rho_hat,1,n) + (1-rho)./(1-repmat(rho_hat,1,n)))).*(a2.*(1-a2));
 
 W1grad = d2*data'/n + lambda*W1;
 b1grad = sum(d2,2)/n;

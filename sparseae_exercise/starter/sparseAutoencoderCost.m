@@ -42,6 +42,7 @@ b2grad = zeros(size(b2));
 % the gradient descent update to W1 would be W1 := W1 - alpha * W1grad, and similarly for W2, b1, b2. 
 % 
 [~,n] = size(data);
+
 a2 = sigmoid(W1*data+repmat(b1,1,n));
 a3 = sigmoid(W2*a2+repmat(b2,1,n));
 
@@ -55,23 +56,6 @@ W1grad = d2*data'/n + lambda*W1;
 b1grad = sum(d2,2)/n;
 W2grad = d3*a2'/n + lambda*W2;
 b2grad = sum(d3,2)/n;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 %-------------------------------------------------------------------
