@@ -1,6 +1,6 @@
 function [ cost, grad ] = stackedAECost(theta, inputSize, hiddenSize, ...
                                               numClasses, netconfig, ...
-                                              lambda, data, labels)
+                                              lambdaSM, data, labels)
                                          
 % stackedAECost: Takes a trained softmaxTheta and a training data set with labels,
 % and returns cost and gradient using a stacked autoencoder model. Used for
@@ -37,7 +37,7 @@ cost = 0; % You need to compute this
 
 % You might find these variables useful
 M = size(data, 2);
-groundTruth = full(sparse(labels, 1:M, 1));
+groundTruth = sparse(labels, 1:M, 1);
 
 
 %% --------------------------- YOUR CODE HERE -----------------------------
@@ -61,19 +61,29 @@ groundTruth = full(sparse(labels, 1:M, 1));
 %                match exactly that of the size of the matrices in stack.
 %
 
+A = cell(numel(stack)+1,1);
+A{1} = data;
+for i = 1:numel(stack)
+    A{i+1} = sigmoid(stack{i}.w*A{i}+repmat(stack{i}.b,1,M));
+end
 
+ethetaX = exp(softmaxTheta*A{end});
+p = ethetaX./repmat(sum(ethetaX,1),numClasses,1);
 
+cost = -1/M*sum(sum(groundTruth.*log( p ))) + lambdaSM/2*sum(sum(softmaxTheta.^2));
 
+softmaxThetaGrad = -1/M*(groundTruth-p)*A{end}' + lambdaSM*softmaxTheta;
 
+d = cell(numel(A),1);
+d{end} = -softmaxTheta'*(groundTruth-p).*(A{end}.*(1-A{end}));  
+for i = numel(A)-1:-1:2
+    d{i} = (stack{i}.w'*d{i+1}).*(A{i}.*(1-A{i}));
+end
 
-
-
-
-
-
-
-
-
+for i = 1:numel(stack)
+    stackgrad{i}.w = d{i+1}*A{i}'/M;
+    stackgrad{i}.b = sum(d{i+1},2)/M;
+end
 
 % -------------------------------------------------------------------------
 

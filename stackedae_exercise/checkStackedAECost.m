@@ -38,6 +38,8 @@ numgrad = computeNumericalGradient( @(x) stackedAECost(x, inputSize, ...
 % Use this to visually compare the gradients side by side
 disp([numgrad grad]); 
 
+plot(numgrad-grad);
+
 % Compare numerically computed gradients with the ones obtained from backpropagation
 disp('Norm between numerical and analytical gradient (should be less than 1e-9)');
 diff = norm(numgrad-grad)/norm(numgrad+grad);
